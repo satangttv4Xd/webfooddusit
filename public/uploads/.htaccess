@@ -1,0 +1,17 @@
+# ============================================================
+#  ปิดการรัน PHP ในโฟลเดอร์ uploads (กัน webshell)
+#  ไฟล์ที่ผู้ใช้อัปโหลดมาจะถูกเสิร์ฟเป็นไฟล์ธรรมดา ไม่ถูกรันเป็น PHP
+# ============================================================
+
+# ปิด PHP engine (php_flag ใช้ใน .htaccess ได้ ต่างจาก php_admin_flag)
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+
+# กันเผื่ออีกชั้น: ห้ามเรียกไฟล์สคริปต์ที่รันได้ทุกชนิด
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|phar|pht|cgi|pl|py|asp|aspx|sh)$">
+    Require all denied
+</FilesMatch>

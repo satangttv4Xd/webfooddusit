@@ -1,0 +1,19 @@
+# ============================================================
+#  .htaccess ราก (Root) — ส่งทุก request เข้าไปที่โฟลเดอร์ public
+#  ทำให้เข้าเว็บได้ที่ http://localhost/webfooddusit/ ได้เลย
+#  โดยไม่ต้องพิมพ์ /public/
+# ============================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /webfooddusit/
+
+    # ไม่ให้เข้าถึงโฟลเดอร์ app, storage, database, vendor โดยตรง
+    RewriteRule ^(app|storage|database|vendor)(/|$) - [F,L]
+
+    # ส่งทุกอย่างเข้า public/
+    RewriteCond %{REQUEST_URI} !^/webfooddusit/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+Options -Indexes
