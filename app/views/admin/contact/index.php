@@ -11,7 +11,7 @@
             <td class="small text-muted"><?= thai_date($c['created_at'], true) ?></td>
             <td><?= $c['is_read'] ? '<span class="badge bg-secondary">อ่านแล้ว</span>' : '<span class="badge bg-danger">ใหม่</span>' ?></td>
             <td class="text-end text-nowrap">
-              <a href="<?= url('admin/contact/view/' . $c['id']) ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-eye"></i></a>
+              <a href="<?= url('admin/contact/show/' . $c['id']) ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-eye"></i></a>
               <a href="<?= url('admin/contact/delete/' . $c['id']) ?>" class="btn btn-sm btn-outline-danger" data-confirm="ลบข้อความนี้?"><i class="fa-solid fa-trash"></i></a>
             </td>
           </tr>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($title ?? 'เข้าสู่ระบบ') ?> | โรงเรียนการเรือน มสด.</title>
-    <link rel="icon" type="image/svg+xml" href="<?= asset('images/favicon.svg') ?>">
+    <link rel="icon" type="image/png" href="<?= asset('images/sdu-logo.png') ?>">
     <meta name="robots" content="noindex, nofollow">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">

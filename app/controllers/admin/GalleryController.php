@@ -46,14 +46,16 @@ class GalleryController extends AdminController
         $this->verifyCsrf();
         if ($this->input('name') === '') { $this->flash('error', 'กรุณากรอกชื่ออัลบั้ม'); $this->redirect('admin/gallery/create'); }
 
+        $albumModel = $this->model('GalleryAlbum');
         $data = $this->collect();
+        $data['slug'] = $albumModel->uniqueSlug($data['slug']);
         if (!empty($_FILES['cover_image']['name'])) {
             $path = Upload::image($_FILES['cover_image'], 'gallery');
             if ($path === null) { $this->flash('error', Upload::$error); $this->redirect('admin/gallery/create'); }
             $data['cover_image'] = $path;
         }
 
-        $id = $this->model('GalleryAlbum')->create($data);
+        $id = $albumModel->create($data);
         audit_log('create', 'gallery', "เพิ่มอัลบั้ม #{$id}");
         $this->flash('success', 'เพิ่มอัลบั้มเรียบร้อยแล้ว จัดการรูปภาพได้เลย');
         $this->redirect('admin/gallery/items/' . $id);
@@ -75,6 +77,7 @@ class GalleryController extends AdminController
         if (!$item) { $this->flash('error', 'ไม่พบอัลบั้ม'); $this->redirect('admin/gallery'); }
 
         $data = $this->collect();
+        $data['slug'] = $model->uniqueSlug($data['slug'], $id);
         if (!empty($_FILES['cover_image']['name'])) {
             $path = Upload::image($_FILES['cover_image'], 'gallery');
             if ($path === null) { $this->flash('error', Upload::$error); $this->redirect('admin/gallery/edit/' . $id); }
@@ -139,8 +142,9 @@ class GalleryController extends AdminController
 
         // อัปโหลดรูปหลายไฟล์
         if (!empty($_FILES['images']['name'][0])) {
-            $files = $_FILES['images'];
-            $total = count($files['name']);
+            $files    = $_FILES['images'];
+            $captions = $this->input('captions', []);
+            $total    = count($files['name']);
             for ($i = 0; $i < $total; $i++) {
                 if ($files['error'][$i] !== UPLOAD_ERR_OK) { continue; }
                 $single = [
@@ -152,9 +156,10 @@ class GalleryController extends AdminController
                 ];
                 $path = Upload::image($single, 'gallery');
                 if ($path === null) { continue; }
+                $caption = trim((string)($captions[$i] ?? ''));
                 $model->create([
                     'album_id'   => $albumId,
-                    'title'      => pathinfo($files['name'][$i], PATHINFO_FILENAME),
+                    'title'      => $caption !== '' ? $caption : pathinfo($files['name'][$i], PATHINFO_FILENAME),
                     'type'       => 'image',
                     'file_path'  => $path,
                     'sort_order' => $sort++,
@@ -171,6 +176,21 @@ class GalleryController extends AdminController
             $this->flash('warning', 'ไม่มีรายการที่เพิ่ม (กรุณาเลือกรูปหรือใส่ลิงก์วิดีโอ)');
         }
         $this->redirect('admin/gallery/items/' . $albumId);
+    }
+
+    /** แก้ไขคำอธิบาย (title) ของรูป/วิดีโอเดี่ยว */
+    public function updateItem(int $id = 0): void
+    {
+        if (!$this->isPost()) { $this->redirect('admin/gallery'); }
+        $this->verifyCsrf();
+        $model = $this->model('Gallery');
+        $item = $model->find($id);
+        if (!$item) { $this->flash('error', 'ไม่พบรายการ'); $this->redirect('admin/gallery'); }
+
+        $model->update($id, ['title' => $this->input('title', '')]);
+        audit_log('update', 'gallery', "แก้ไขคำอธิบายรูป #{$id}");
+        $this->flash('success', 'บันทึกเรียบร้อยแล้ว');
+        $this->redirect('admin/gallery/items/' . $item['album_id']);
     }
 
     /** ลบรูป/วิดีโอเดี่ยว */

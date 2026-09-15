@@ -33,10 +33,11 @@ header('Referrer-Policy: strict-origin-when-cross-origin');
 header('X-XSS-Protection: 1; mode=block');
 // Content Security Policy (ผ่อนปรนให้ใช้ CDN ที่จำเป็น)
 header("Content-Security-Policy: default-src 'self'; "
-    . "img-src 'self' data: https:; "
+    . "img-src 'self' data: blob: https:; "
     . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
     . "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; "
     . "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://code.jquery.com https://unpkg.com; "
+    . "worker-src 'self' blob: https://cdnjs.cloudflare.com; "
     . "frame-src 'self' https://www.google.com https://www.youtube.com;");
 
 // ---------- ตั้งค่า Session อย่างปลอดภัย ----------

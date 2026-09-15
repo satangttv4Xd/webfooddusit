@@ -1,0 +1,1 @@
+ALTER TABLE deans ADD COLUMN IF NOT EXISTS bio TEXT NULL COMMENT 'ประวัติ/ผลงาน' AFTER term;

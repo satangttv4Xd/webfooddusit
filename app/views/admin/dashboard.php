@@ -63,7 +63,7 @@
     <div class="card p-3 mb-3">
       <h6 class="mb-3"><i class="fa-solid fa-envelope text-danger me-2"></i>ข้อความติดต่อล่าสุด</h6>
       <?php foreach ($recentContact as $c): ?>
-        <a href="<?= url('admin/contact/view/' . $c['id']) ?>" class="d-block text-reset text-decoration-none border-bottom py-2">
+        <a href="<?= url('admin/contact/show/' . $c['id']) ?>" class="d-block text-reset text-decoration-none border-bottom py-2">
           <div class="d-flex justify-content-between">
             <strong class="small"><?= e($c['name']) ?></strong>
             <?php if (!$c['is_read']): ?><span class="badge bg-danger">ใหม่</span><?php endif; ?>

@@ -21,11 +21,13 @@ $navItems = [
     ['programs',   'graduation-cap',  'หลักสูตร', 'programs.manage'],
     ['staff',      'chalkboard-user', 'บุคลากร/อาจารย์', 'staff.manage'],
     ['deans',      'user-tie',        'ทำเนียบคณบดี', 'staff.manage'],
+    ['committee',  'people-group',    'คณะกรรมการประจำโรงเรียน', 'committee.manage'],
     ['alumni',     'user-graduate',   'ศิษย์เก่า', 'staff.manage'],
     ['events',     'calendar-days',   'กิจกรรม', 'events.manage'],
     ['banner',     'images',          'แบนเนอร์', 'banner.manage'],
     ['gallery',    'photo-film',      'แกลเลอรี', 'gallery.manage'],
     ['downloads',  'file-arrow-down', 'ดาวน์โหลด', 'downloads.manage'],
+    ['documents',  'file-contract',   'เอกสาร/รายงาน', 'documents.manage'],
     ['pages',      'file-lines',      'หน้าเนื้อหา', 'pages.manage'],
     ['faq',        'circle-question', 'คำถามพบบ่อย', 'pages.manage'],
     ['contact',    'envelope',        'ข้อความติดต่อ', 'contact.view'],
@@ -40,7 +42,7 @@ $navItems = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($title ?? 'ผู้ดูแลระบบ') ?> | ระบบจัดการเว็บไซต์</title>
-    <link rel="icon" type="image/svg+xml" href="<?= asset('images/favicon.svg') ?>">
+    <link rel="icon" type="image/png" href="<?= asset('images/sdu-logo.png') ?>">
     <meta name="robots" content="noindex, nofollow">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">

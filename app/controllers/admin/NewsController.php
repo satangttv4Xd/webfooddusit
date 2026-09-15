@@ -59,12 +59,14 @@ class NewsController extends AdminController
         if (!$this->isPost()) { $this->redirect('admin/news'); }
         $this->verifyCsrf();
 
+        $newsModel = $this->model('News');
         $data = $this->collect();
         if (($err = $this->validate($data)) !== '') {
             $_SESSION['old'] = $_POST;
             $this->flash('error', $err);
             $this->redirect('admin/news/create');
         }
+        $data['slug'] = $newsModel->uniqueSlug($data['slug']);
 
         // อัปโหลดรูปปก
         if (!empty($_FILES['cover_image']['name'])) {
@@ -74,7 +76,7 @@ class NewsController extends AdminController
         }
 
         $data['user_id'] = \Auth::id();
-        $id = $this->model('News')->create($data);
+        $id = $newsModel->create($data);
         audit_log('create', 'news', "เพิ่มข่าว #{$id}: {$data['title']}");
         $this->flash('success', 'เพิ่มข่าวเรียบร้อยแล้ว');
         $this->redirect('admin/news');
@@ -109,6 +111,7 @@ class NewsController extends AdminController
             $this->flash('error', $err);
             $this->redirect('admin/news/edit/' . $id);
         }
+        $data['slug'] = $model->uniqueSlug($data['slug'], $id);
 
         if (!empty($_FILES['cover_image']['name'])) {
             $path = Upload::image($_FILES['cover_image'], 'news');

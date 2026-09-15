@@ -523,6 +523,7 @@ CREATE TABLE `staff` (
   `department_id` INT UNSIGNED DEFAULT NULL,
   `full_name`     VARCHAR(200) NOT NULL,
   `position`      VARCHAR(200) DEFAULT NULL,
+  `group_name`    VARCHAR(191) DEFAULT NULL COMMENT 'กลุ่ม/หลักสูตร/วิทยาเขต สำหรับจัดหมวดหน้าบุคลากรสายวิชาการ',
   `type`          ENUM('executive','teacher','staff') NOT NULL DEFAULT 'teacher'
                   COMMENT 'ผู้บริหาร/อาจารย์/เจ้าหน้าที่',
   `email`         VARCHAR(150) DEFAULT NULL,
@@ -539,6 +540,24 @@ CREATE TABLE `staff` (
   KEY `idx_staff_dept` (`department_id`),
   KEY `idx_staff_type` (`type`),
   CONSTRAINT `fk_staff_dept` FOREIGN KEY (`department_id`) REFERENCES `departments`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
+--  24.1) school_committee : คณะกรรมการประจำโรงเรียนการเรือน
+-- ============================================================
+DROP TABLE IF EXISTS `school_committee`;
+CREATE TABLE `school_committee` (
+  `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `full_name`   VARCHAR(191) NOT NULL COMMENT 'ชื่อ-นามสกุล พร้อมคำนำหน้า',
+  `position`    VARCHAR(255) NOT NULL COMMENT 'ตำแหน่งงาน/หลักสูตรที่รับผิดชอบ',
+  `group_name`  VARCHAR(100) NOT NULL COMMENT 'กลุ่มบทบาทในคณะกรรมการ',
+  `photo`       VARCHAR(255) DEFAULT NULL,
+  `sort_order`  INT NOT NULL DEFAULT 0,
+  `status`      ENUM('active','inactive') NOT NULL DEFAULT 'active',
+  `created_at`  DATETIME DEFAULT NULL,
+  `updated_at`  DATETIME DEFAULT NULL,
+  `deleted_at`  DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
@@ -592,6 +611,7 @@ DROP TABLE IF EXISTS `documents`;
 CREATE TABLE `documents` (
   `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `title`       VARCHAR(255) NOT NULL,
+  `cover_image` VARCHAR(255) DEFAULT NULL COMMENT 'รูปหน้าปก/ภาพตัวอย่างของเอกสาร',
   `doc_number`  VARCHAR(100) DEFAULT NULL,
   `category`    VARCHAR(150) DEFAULT NULL,
   `file_path`   VARCHAR(255) DEFAULT NULL,

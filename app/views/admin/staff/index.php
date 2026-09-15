@@ -6,13 +6,14 @@
 <div class="table-card">
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
-      <thead><tr><th style="width:70px">รูป</th><th>ชื่อ-นามสกุล</th><th>ตำแหน่ง</th><th>ประเภท</th><th>ลำดับ</th><th>สถานะ</th><th class="text-end">จัดการ</th></tr></thead>
+      <thead><tr><th style="width:70px">รูป</th><th>ชื่อ-นามสกุล</th><th>ตำแหน่ง</th><th>กลุ่ม/หลักสูตร</th><th>ประเภท</th><th>ลำดับ</th><th>สถานะ</th><th class="text-end">จัดการ</th></tr></thead>
       <tbody>
         <?php foreach ($staff as $s): ?>
           <tr>
             <td><img src="<?= upload_url($s['photo']) ?>" class="rounded-circle" width="44" height="44" style="object-fit:cover" alt=""></td>
             <td class="fw-500"><?= e($s['full_name']) ?></td>
             <td class="small"><?= e($s['position'] ?: '-') ?></td>
+            <td class="small text-muted"><?= e($s['group_name'] ?? '-') ?></td>
             <td><span class="badge bg-secondary"><?= e(Staff::typeLabel($s['type'])) ?></span></td>
             <td><?= (int)$s['sort_order'] ?></td>
             <td><?= status_badge($s['status']) ?></td>
@@ -22,7 +23,7 @@
             </td>
           </tr>
         <?php endforeach; ?>
-        <?php if (empty($staff)): ?><tr><td colspan="7" class="text-center text-muted py-4">ยังไม่มีข้อมูลบุคลากร</td></tr><?php endif; ?>
+        <?php if (empty($staff)): ?><tr><td colspan="8" class="text-center text-muted py-4">ยังไม่มีข้อมูลบุคลากร</td></tr><?php endif; ?>
       </tbody>
     </table>
   </div>

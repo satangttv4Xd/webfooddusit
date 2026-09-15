@@ -108,6 +108,7 @@ class StaffController extends AdminController
         return [
             'full_name'     => $this->input('full_name'),
             'position'      => $this->input('position', ''),
+            'group_name'    => $this->input('group_name', '') ?: null,
             'type'          => $type,
             'department_id' => $deptId ?: null,
             'email'         => $this->input('email', ''),

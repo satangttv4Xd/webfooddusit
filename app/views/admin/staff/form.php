@@ -28,6 +28,11 @@ $curDept = (int)($item['department_id'] ?? 0);
                 <option value="<?= $d['id'] ?>" <?= $curDept === (int)$d['id'] ? 'selected' : '' ?>><?= e($d['name']) ?></option>
               <?php endforeach; ?>
             </select></div>
+          <div class="col-md-6"><label class="form-label">กลุ่ม/หลักสูตร/วิทยาเขต <small class="text-muted">(แสดงบนหน้าบุคลากรสายวิชาการ)</small></label>
+            <input type="text" name="group_name" class="form-control" list="groupList" placeholder="เช่น วท.บ. เทคโนโลยีการประกอบอาหารและการบริการ" value="<?= e($item['group_name'] ?? '') ?>">
+            <datalist id="groupList">
+              <?php foreach (Staff::ACADEMIC_GROUPS as $g): ?><option value="<?= e($g) ?>"><?php endforeach; ?>
+            </datalist></div>
           <div class="col-md-6"><label class="form-label">อีเมล</label>
             <input type="email" name="email" class="form-control" value="<?= e($item['email'] ?? '') ?>"></div>
           <div class="col-md-6"><label class="form-label">โทรศัพท์</label>

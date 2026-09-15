@@ -42,11 +42,11 @@ define('SESSION_NAME', 'FOODDUSIT_SESS');
 define('SESSION_TIMEOUT', 3600);          // หมดอายุ session (วินาที) = 1 ชั่วโมง
 define('CSRF_TOKEN_NAME', 'csrf_token');
 define('LOGIN_MAX_ATTEMPTS', 5);          // ล็อกอินผิดได้กี่ครั้งก่อนโดนล็อก
-define('LOGIN_LOCK_TIME', 1200);          // ล็อกนานกี่วินาที (20 นาที)
+define('LOGIN_LOCK_TIME', 600);           // ล็อกนานกี่วินาที (10 นาที)
 define('REMEMBER_ME_DAYS', 30);
 
 // ---------- การอัปโหลดไฟล์ ----------
-define('MAX_UPLOAD_SIZE', 5 * 1024 * 1024); // 5 MB
+define('MAX_UPLOAD_SIZE', 30 * 1024 * 1024); // 30 MB (รองรับไฟล์รายงาน PDF ที่มักมีขนาด 12-23 MB)
 define('ALLOWED_IMAGE_TYPES', 'jpg,jpeg,png,webp,gif');
 define('ALLOWED_DOC_TYPES', 'pdf,doc,docx,xls,xlsx,ppt,pptx');
 

@@ -95,6 +95,7 @@ class DeansController extends AdminController
             'full_name'  => $this->input('full_name'),
             'position'   => $this->input('position', 'คณบดี') ?: 'คณบดี',
             'term'       => $this->input('term', ''),
+            'bio'        => $this->input('bio', ''),
             'sort_order' => (int)$this->input('sort_order', 0),
             'status'     => $this->input('status', 'active') === 'inactive' ? 'inactive' : 'active',
         ];

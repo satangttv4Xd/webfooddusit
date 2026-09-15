@@ -16,6 +16,8 @@ $action = $isEdit ? url('admin/deans/update/' . $item['id']) : url('admin/deans/
           <div class="col-md-6"><label class="form-label">ช่วงเวลาการดำรงตำแหน่ง</label>
             <input type="text" name="term" class="form-control" placeholder="เช่น 28 มิถุนายน 2562 – ปัจจุบัน" value="<?= e($item['term'] ?? '') ?>"></div>
         </div>
+        <div class="mb-0 mt-3"><label class="form-label">ประวัติ / ผลงาน <small class="text-muted">(แสดงเมื่อกดดูรายละเอียดที่หน้าเว็บ)</small></label>
+          <textarea name="bio" class="form-control" rows="6" placeholder="เช่น ประวัติการศึกษา ผลงาน วิสัยทัศน์ในการบริหาร"><?= e($item['bio'] ?? '') ?></textarea></div>
       </div>
     </div>
     <div class="col-lg-4">

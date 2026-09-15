@@ -16,8 +16,13 @@ class SdugoalController extends Controller
     {
         $files = [];
         foreach (glob($this->pdfDir . '/*.pdf') ?: [] as $path) {
+            $name = basename($path);
+            // แสดงเฉพาะเอกสาร SDU Goal เท่านั้น (ไฟล์หลักสูตรอื่นในโฟลเดอร์ไม่นำมาแสดง)
+            if (stripos($name, 'sdu') === false && stripos($name, 'goal') === false) {
+                continue;
+            }
             $files[] = [
-                'name'  => basename($path),
+                'name'  => $name,
                 'size'  => $this->humanSize(filesize($path)),
             ];
         }

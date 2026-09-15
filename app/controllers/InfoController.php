@@ -22,6 +22,60 @@ class InfoController extends Controller
             return;
         }
 
+        if ($slug === 'school-committee') {
+            $this->view('public/school-committee', [
+                'title'           => $this->pages[$slug],
+                'metaDescription' => 'คณะกรรมการประจำโรงเรียนการเรือน มหาวิทยาลัยสวนดุสิต',
+                'groups'          => $this->model('SchoolCommittee')->activeGrouped(),
+            ]);
+            return;
+        }
+
+        if ($slug === 'staff-academic') {
+            $this->view('public/staff-academic', [
+                'title'           => $this->pages[$slug],
+                'metaDescription' => 'บุคลากรสายวิชาการ โรงเรียนการเรือน มหาวิทยาลัยสวนดุสิต',
+                'groups'          => $this->model('Staff')->academicGrouped(),
+            ]);
+            return;
+        }
+
+        if ($slug === 'staff-support') {
+            $this->view('public/staff-support', [
+                'title'           => $this->pages[$slug],
+                'metaDescription' => 'บุคลากรสายสนับสนุน โรงเรียนการเรือน มหาวิทยาลัยสวนดุสิต',
+                'groups'          => $this->model('Staff')->groupedByType('staff'),
+            ]);
+            return;
+        }
+
+        if ($slug === 'annual-report') {
+            $this->view('public/annual-report', [
+                'title'           => $this->pages[$slug],
+                'metaDescription' => 'รายงานผลการดำเนินงาน โรงเรียนการเรือน มหาวิทยาลัยสวนดุสิต',
+                'items'           => $this->model('Document')->byCategory('รายงานผลการดำเนินงาน'),
+            ]);
+            return;
+        }
+
+        if ($slug === 'newsletter') {
+            $this->view('public/newsletter', [
+                'title'           => $this->pages[$slug],
+                'metaDescription' => 'จดหมายข่าว โรงเรียนการเรือน มหาวิทยาลัยสวนดุสิต',
+                'items'           => $this->model('Document')->byCategory('จดหมายข่าว'),
+            ]);
+            return;
+        }
+
+        if ($slug === 'km') {
+            $this->view('public/km', [
+                'title'           => $this->pages[$slug],
+                'metaDescription' => 'การจัดการความรู้ (KM) โรงเรียนการเรือน มหาวิทยาลัยสวนดุสิต',
+                'items'           => $this->model('Document')->byCategory('การจัดการความรู้ (KM)'),
+            ]);
+            return;
+        }
+
         $this->view('public/coming-soon', [
             'title'    => $this->pages[$slug],
             'pageName' => $this->pages[$slug],

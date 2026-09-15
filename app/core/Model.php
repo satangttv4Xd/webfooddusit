@@ -219,6 +219,29 @@ abstract class Model
         return [$sql, $params];
     }
 
+    /**
+     * รับประกันว่า slug ไม่ซ้ำกับที่มีอยู่แล้วในตาราง (เช็คทุกแถวรวมที่ถูก soft-delete ไปแล้ว
+     * เพราะ constraint UNIQUE ระดับฐานข้อมูลไม่สนใจ deleted_at) ถ้าซ้ำจะเติม -2, -3, ... ต่อท้ายให้อัตโนมัติ
+     * @param string   $slug      slug ที่ต้องการใช้ (ผ่าน Security::slug() มาแล้ว)
+     * @param int|null $excludeId ไม่นับแถวนี้ (ใช้ตอนแก้ไขแถวเดิมที่ slug ไม่ได้เปลี่ยน)
+     */
+    public function uniqueSlug(string $slug, ?int $excludeId = null): string
+    {
+        $base = $slug;
+        $i = 2;
+        while (true) {
+            $sql = "SELECT COUNT(*) FROM {$this->table} WHERE slug = :slug";
+            $params = ['slug' => $slug];
+            if ($excludeId !== null) {
+                $sql .= " AND {$this->primaryKey} <> :id";
+                $params['id'] = $excludeId;
+            }
+            $exists = (int)$this->db->query($sql)->bind($params)->column();
+            if ($exists === 0) { return $slug; }
+            $slug = $base . '-' . $i++;
+        }
+    }
+
     /** เข้าถึง Database โดยตรงสำหรับ query ซับซ้อนใน Model ลูก */
     protected function db(): Database
     {

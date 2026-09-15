@@ -133,6 +133,28 @@
       });
     }
 
+    // ---------- เมนูหลักเปิดด้วยการชี้เมาส์ (hover) เฉพาะจอใหญ่ ----------
+    var hoverMql = window.matchMedia('(min-width: 992px)');
+    var mainDropdowns = [];
+    document.querySelectorAll('.main-nav .navbar-nav > .nav-item.dropdown').forEach(function (item) {
+      var toggle = item.querySelector('[data-bs-toggle="dropdown"]');
+      if (!toggle || typeof bootstrap === 'undefined') return;
+      var dd = bootstrap.Dropdown.getOrCreateInstance(toggle);
+      var closeTimer;
+      item.addEventListener('mouseenter', function () {
+        if (!hoverMql.matches) return;
+        clearTimeout(closeTimer);
+        // ปิดเมนูหลักอื่นที่เปิดค้างก่อน (Bootstrap ไม่ปิดให้เองเมื่อสั่ง show() จากโค้ด)
+        mainDropdowns.forEach(function (o) { if (o.dd !== dd) o.dd.hide(); });
+        dd.show();
+      });
+      item.addEventListener('mouseleave', function () {
+        if (!hoverMql.matches) return;
+        closeTimer = setTimeout(function () { dd.hide(); }, 150);
+      });
+      mainDropdowns.push({ item: item, dd: dd });
+    });
+
     // ---------- เมนูย่อยซ้อน (submenu) เปิดด้วยการคลิก ----------
     document.querySelectorAll('.main-nav .dropdown-submenu > .dropdown-toggle').forEach(function (toggle) {
       toggle.addEventListener('click', function (e) {
@@ -155,6 +177,140 @@
 
     // ---------- Flash message เป็น SweetAlert (ถ้ามี data) ----------
     // (จัดการผ่าน alert Bootstrap ในหน้าอยู่แล้ว)
+
+    // ---------- ผู้ช่วยตอบคำถาม (Chatbot) ----------
+    (function initChat() {
+      var toggle = document.getElementById('chat-toggle');
+      var box    = document.getElementById('chat-box');
+      var body   = document.getElementById('chat-body');
+      var form   = document.getElementById('chat-form');
+      var input  = document.getElementById('chat-text');
+      if (!toggle || !box || !body || !form || !input) return;
+
+      function openChat(open) {
+        box.classList.toggle('open', open);
+        toggle.classList.toggle('hidden', open);
+        if (open) input.focus();
+      }
+      toggle.addEventListener('click', function () { openChat(true); });
+      document.getElementById('chat-close')?.addEventListener('click', function () { openChat(false); });
+
+      /** เพิ่มข้อความลงกล่องแชท */
+      function addMsg(text, who) {
+        var el = document.createElement('div');
+        el.className = 'chat-msg ' + who;
+        el.textContent = text;
+        body.appendChild(el);
+        body.scrollTop = body.scrollHeight;
+        return el;
+      }
+
+      /** เพิ่มลิงก์แนะนำ */
+      function addLinks(links) {
+        if (!links || !links.length) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'chat-links';
+        links.forEach(function (l) {
+          var a = document.createElement('a');
+          a.href = l.url;
+          a.textContent = l.title;
+          if (/^https?:\/\//i.test(l.url) && l.url.indexOf(location.host) === -1) {
+            a.target = '_blank';
+            a.rel = 'noopener';
+          }
+          wrap.appendChild(a);
+        });
+        body.appendChild(wrap);
+        body.scrollTop = body.scrollHeight;
+      }
+
+      /** ส่งคำถามไปยังเซิร์ฟเวอร์ */
+      function send(text) {
+        text = (text || '').trim();
+        if (!text) return;
+        addMsg(text, 'user');
+        input.value = '';
+
+        var typing = addMsg('กำลังค้นหาข้อมูล...', 'bot typing');
+
+        fetch(window.CHAT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: 'message=' + encodeURIComponent(text)
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            typing.remove();
+            addMsg(data.reply || 'ขออภัยครับ เกิดข้อผิดพลาด', 'bot');
+            addLinks(data.links);
+          })
+          .catch(function () {
+            typing.remove();
+            addMsg('ขออภัยครับ ไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่อีกครั้ง', 'bot');
+          });
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        send(input.value);
+      });
+
+      // ปุ่มคำถามยอดนิยม
+      body.addEventListener('click', function (e) {
+        var chip = e.target.closest('.chat-chip');
+        if (chip) send(chip.dataset.q);
+      });
+
+      // ปิดด้วยปุ่ม Esc
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && box.classList.contains('open')) openChat(false);
+      });
+    })();
+
+    // ---------- เช็คเนื้อหาใหม่เป็นระยะ แล้วรีโหลดหน้าอัตโนมัติเฉพาะตอนมีการเปลี่ยนแปลงจริง ----------
+    // ไม่ใช่ real-time เป๊ะ ๆ (เช็คทุก 30 วิ) แต่ผู้ใช้ไม่ต้องกด F5 เอง เมื่อแอดมินเพิ่ม/แก้/ลบเนื้อหา
+    (function () {
+      var pingUrl = window.PING_URL;
+      if (!pingUrl) return;
+
+      var POLL_MS = 30000;
+      var baseline = null;
+
+      function isUserBusy() {
+        var el = document.activeElement;
+        var typing = el && ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName);
+        var modalOpen = document.querySelector('.modal.show') !== null;
+        return typing || modalOpen;
+      }
+
+      function check() {
+        fetch(pingUrl, { cache: 'no-store' })
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            var ts = data && data.ts;
+            if (!ts) return;
+            if (baseline === null) { baseline = ts; return; } // ครั้งแรก: จำไว้เป็นฐาน ยังไม่รีโหลด
+            if (ts > baseline) {
+              if (isUserBusy()) return; // รอรอบถัดไป ไม่รบกวนตอนกำลังพิมพ์/เปิด modal อยู่
+              var note = document.createElement('div');
+              note.textContent = 'มีข้อมูลใหม่ กำลังอัปเดตหน้า...';
+              note.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);'
+                + 'background:var(--primary,#0F4C81);color:#fff;padding:.6rem 1.2rem;border-radius:30px;'
+                + 'font-size:.9rem;z-index:2000;box-shadow:0 8px 30px rgba(0,0,0,.2)';
+              document.body.appendChild(note);
+              setTimeout(function () { location.reload(); }, 700);
+            }
+          })
+          .catch(function () { /* เงียบ ๆ ถ้าเช็คไม่สำเร็จ รอรอบถัดไป */ });
+      }
+
+      check(); // เช็คทันทีตอนโหลดหน้า เพื่อจับเวลาตั้งต้นให้ถูกจุด (ไม่ต้องรอรอบแรกของ setInterval)
+
+      setInterval(check, POLL_MS);
+    })();
 
   });
 })();

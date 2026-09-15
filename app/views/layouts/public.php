@@ -33,13 +33,15 @@ $og = $ogImage ?? asset('images/og-default.svg');
     {"@context":"https://schema.org","@type":"CollegeOrUniversity","name":"<?= e(APP_NAME) ?>","url":"<?= e(BASE_URL) ?>"}
     </script>
 
-    <link rel="icon" type="image/svg+xml" href="<?= asset('images/favicon.svg') ?>">
+    <link rel="icon" type="image/png" href="<?= asset('images/sdu-logo.png') ?>">
+    <link rel="apple-touch-icon" href="<?= asset('images/sdu-logo.png') ?>">
 
     <!-- Fonts + Bootstrap 5 + Icons + AOS + SweetAlert2 -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
     <link href="<?= asset('css/style.css') ?>" rel="stylesheet">
 </head>
 <body>
@@ -103,7 +105,22 @@ $og = $ogImage ?? asset('images/og-default.svg');
                                         render_nav_items($m['children'], false);
                                         echo '</ul></li>';
                                     } else {
-                                        echo '<li><a class="dropdown-item" href="' . url($m['url']) . '" target="' . e($m['target']) . '">' . e($m['title']) . '</a></li>';
+                                        $cur = trim($_GET['url'] ?? '', '/');
+                                        $u   = trim($m['url'], '/');
+                                        $active = false;
+                                        if ($u !== '') {
+                                            if ($cur === $u || str_starts_with($cur, $u . '/')) {
+                                                $active = true; // หน้าตรง หรือหน้าย่อยของ url นั้น
+                                            } elseif (str_starts_with($u, 'curriculum/')) {
+                                                // หน้าย่อยของหลักสูตร เช่น curriculum/courses/{slug} หรือ curriculum/plan/{slug}
+                                                $slug = substr($u, strlen('curriculum/'));
+                                                if ($slug !== '' && str_starts_with($cur, 'curriculum/') && str_ends_with($cur, '/' . $slug)) {
+                                                    $active = true;
+                                                }
+                                            }
+                                        }
+                                        $act = $active ? ' active' : '';
+                                        echo '<li><a class="dropdown-item' . $act . '" href="' . url($m['url']) . '" target="' . e($m['target']) . '">' . e($m['title']) . '</a></li>';
                                     }
                                 }
                             }
@@ -165,7 +182,7 @@ $og = $ogImage ?? asset('images/og-default.svg');
                     <h6 class="footer-title">ลิงก์ด่วน</h6>
                     <ul class="footer-links">
                         <li><a href="<?= url('about') ?>">เกี่ยวกับเรา</a></li>
-                        <li><a href="<?= url('programs') ?>">หลักสูตร</a></li>
+                        <li><a href="<?= url('curriculum') ?>">หลักสูตร</a></li>
                         <li><a href="<?= url('news') ?>">ข่าวสาร</a></li>
                         <li><a href="<?= url('events') ?>">กิจกรรม</a></li>
                         <li><a href="<?= url('downloads') ?>">ดาวน์โหลด</a></li>
@@ -201,6 +218,40 @@ $og = $ogImage ?? asset('images/og-default.svg');
     <!-- Back to top -->
     <button id="back-to-top" aria-label="กลับขึ้นบน"><i class="fa-solid fa-chevron-up"></i></button>
 
+    <!-- ผู้ช่วยตอบคำถาม (Chatbot) -->
+    <?php require_once APP_PATH . '/controllers/ChatController.php'; ?>
+    <button id="chat-toggle" aria-label="เปิดผู้ช่วยตอบคำถาม" title="สอบถามข้อมูล">
+        <i class="fa-solid fa-comments"></i>
+    </button>
+    <div id="chat-box" class="chat-box" aria-live="polite">
+        <div class="chat-header">
+            <div class="d-flex align-items-center gap-2">
+                <span class="chat-avatar"><i class="fa-solid fa-robot"></i></span>
+                <div>
+                    <strong class="d-block">ผู้ช่วยตอบคำถาม</strong>
+                    <small>โรงเรียนการเรือน มสด.</small>
+                </div>
+            </div>
+            <button id="chat-close" aria-label="ปิด"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="chat-body" class="chat-body">
+            <div class="chat-msg bot">สวัสดีครับ 👋 ผมเป็นผู้ช่วยตอบคำถามของโรงเรียนการเรือน สอบถามเรื่องหลักสูตร ค่าเทอม การรับสมัคร หรือทุนการศึกษาได้เลยครับ</div>
+            <div class="chat-quick">
+                <?php foreach (ChatController::QUICK as $q): ?>
+                    <button type="button" class="chat-chip" data-q="<?= e($q) ?>"><?= e($q) ?></button>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <form id="chat-form" class="chat-input">
+            <input type="text" id="chat-text" class="form-control" placeholder="พิมพ์คำถาม..." autocomplete="off" maxlength="300">
+            <button class="btn btn-primary-custom" type="submit" aria-label="ส่ง"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+    </div>
+    <script>window.CHAT_URL = "<?= url('chat/ask') ?>";</script>
+
+    <!-- เช็คเนื้อหาใหม่เป็นระยะ แล้วรีโหลดหน้าอัตโนมัติเฉพาะตอนมีการเปลี่ยนแปลงจริง (ไม่ใช่ real-time เป๊ะ ๆ แต่ผู้ใช้ไม่ต้องกด F5 เอง) -->
+    <script>window.PING_URL = "<?= url('ping/updates') ?>";</script>
+
     <!-- Cookie consent -->
     <div id="cookie-consent" class="cookie-consent">
         <span>เว็บไซต์นี้ใช้คุกกี้เพื่อประสบการณ์ที่ดีขึ้น</span>
@@ -211,6 +262,7 @@ $og = $ogImage ?? asset('images/og-default.svg');
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="<?= asset('js/main.js') ?>"></script>
 </body>
 </html>

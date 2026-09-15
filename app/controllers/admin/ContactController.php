@@ -21,7 +21,7 @@ class ContactController extends AdminController
         $this->adminView('contact/index', ['title' => 'ข้อความติดต่อ', 'pager' => $pager]);
     }
 
-    public function view(int $id = 0): void
+    public function show(int $id = 0): void
     {
         $model = $this->model('Contact');
         $item = $model->find($id);

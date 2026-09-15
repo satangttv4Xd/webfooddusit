@@ -2,47 +2,73 @@
 
 <!-- ============ HERO CAROUSEL ============ -->
 <section class="hero">
-  <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4500" data-bs-pause="false">
-    <div class="carousel-indicators">
-      <?php foreach ($banner as $i => $b): ?>
-        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $i ?>"
-                class="<?= $i === 0 ? 'active' : '' ?>" aria-label="สไลด์ <?= $i + 1 ?>"></button>
-      <?php endforeach; ?>
-    </div>
+  <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000" data-bs-pause="hover">
+    <?php if (count($banner) > 1): ?>
+      <div class="carousel-indicators">
+        <?php foreach ($banner as $i => $b): ?>
+          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $i ?>"
+                  class="<?= $i === 0 ? 'active' : '' ?>" aria-label="สไลด์ <?= $i + 1 ?>"></button>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
     <div class="carousel-inner">
       <?php if (empty($banner)): ?>
         <div class="carousel-item active">
-          <img src="<?= asset('images/og-default.svg') ?>" alt="banner">
-          <div class="hero-overlay"></div>
+          <img src="<?= asset('images/og-default.svg') ?>" alt="โรงเรียนการเรือน มหาวิทยาลัยสวนดุสิต" class="hero-img">
         </div>
       <?php endif; ?>
       <?php foreach ($banner as $i => $b): ?>
+        <?php
+          $title = trim($b['title'] ?? '');
+          $subtitle = trim($b['subtitle'] ?? '');
+          $btnText = trim($b['button_text'] ?? '');
+          $linkUrl = trim($b['link_url'] ?? '');
+          $hasCaption = ($title !== '' || $subtitle !== '');
+          $hasLink = ($linkUrl !== '');
+        ?>
         <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
-          <img src="<?= upload_url($b['image']) ?>" alt="<?= e($b['title']) ?>">
-          <div class="hero-overlay"></div>
-          <div class="hero-caption">
-            <div class="container">
-              <div class="col-lg-8" data-aos="fade-up">
-                <span class="hero-badge">โรงเรียนการเรือน</span>
-                <h1><?= e($b['title']) ?></h1>
-                <p class="mb-4"><?= e($b['subtitle']) ?></p>
-                <?php if ($b['link_url']): ?>
-                  <a href="<?= url($b['link_url']) ?>" class="btn btn-gold btn-lg">
-                    <?= e($b['button_text'] ?: 'อ่านเพิ่มเติม') ?> <i class="fa-solid fa-arrow-right ms-1"></i>
-                  </a>
-                <?php endif; ?>
+          <?php if (!$hasCaption && $hasLink): ?>
+            <!-- แบนเนอร์กราฟิกล้วนที่มีลิงก์: สามารถกดได้ทั้งภาพ -->
+            <a href="<?= url($linkUrl) ?>" class="hero-slide-link" title="<?= e($title ?: 'แบนเนอร์') ?>">
+              <img src="<?= upload_url($b['image']) ?>" alt="<?= e($title ?: 'แบนเนอร์') ?>" class="hero-img" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
+            </a>
+          <?php else: ?>
+            <!-- แบนเนอร์กราฟิกปกติ หรือ แบนเนอร์ที่มีข้อความซ้อน -->
+            <img src="<?= upload_url($b['image']) ?>" alt="<?= e($title ?: 'แบนเนอร์') ?>" class="hero-img" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
+            
+            <?php if ($hasCaption): ?>
+              <div class="hero-overlay"></div>
+              <div class="hero-caption">
+                <div class="container">
+                  <div class="col-lg-8 col-xl-7" data-aos="fade-up">
+                    <span class="hero-badge">โรงเรียนการเรือน</span>
+                    <?php if ($title !== ''): ?>
+                      <h1><?= e($title) ?></h1>
+                    <?php endif; ?>
+                    <?php if ($subtitle !== ''): ?>
+                      <p class="mb-4"><?= e($subtitle) ?></p>
+                    <?php endif; ?>
+                    <?php if ($hasLink): ?>
+                      <a href="<?= url($linkUrl) ?>" class="btn btn-gold btn-lg">
+                        <?= e($btnText ?: 'อ่านเพิ่มเติม') ?> <i class="fa-solid fa-arrow-right ms-1"></i>
+                      </a>
+                    <?php endif; ?>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            <?php endif; ?>
+          <?php endif; ?>
         </div>
       <?php endforeach; ?>
     </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon"></span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon"></span>
-    </button>
+    <?php if (count($banner) > 1): ?>
+      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="สไลด์ก่อนหน้า">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" aria-label="สไลด์ถัดไป">
+        <span class="carousel-control-next-icon"></span>
+      </button>
+    <?php endif; ?>
   </div>
 </section>
 
@@ -98,7 +124,7 @@
       <?php endforeach; ?>
     </div>
     <div class="text-center mt-4" data-aos="fade-up">
-      <a href="<?= url('programs') ?>" class="btn btn-primary-custom">ดูหลักสูตรทั้งหมด</a>
+      <a href="<?= url('curriculum') ?>" class="btn btn-primary-custom">ดูหลักสูตรทั้งหมด</a>
     </div>
   </div>
 </section>
@@ -253,23 +279,57 @@
       <h2>อาจารย์</h2>
       <div class="title-underline"></div>
     </div>
-    <div class="row g-4 justify-content-center">
-      <?php foreach ($teachers as $t): ?>
-        <div class="col-md-6 col-lg-3" data-aos="fade-up">
-          <div class="card-modern p-4 text-center h-100">
-            <img src="<?= upload_url($t['photo']) ?>" class="rounded-circle mb-3" width="90" height="90"
-                 style="object-fit:cover" alt="<?= e($t['full_name']) ?>">
-            <h6 class="mb-1"><?= e($t['full_name']) ?></h6>
-            <div class="card-cat mb-2"><?= e($t['position']) ?></div>
-            <?php if (!empty($t['expertise'])): ?>
-              <p class="card-meta"><?= excerpt($t['expertise'], 80) ?></p>
-            <?php endif; ?>
+    <div class="swiper teachers-swiper" data-aos="fade-up">
+      <div class="swiper-wrapper">
+        <?php foreach ($teachers as $t): ?>
+          <div class="swiper-slide">
+            <div class="card-modern p-4 text-center h-100 person-card" role="button" tabindex="0"
+                 data-name="<?= e($t['full_name']) ?>"
+                 data-position="<?= e($t['position'] ?? '') ?>"
+                 data-photo="<?= e(upload_url($t['photo'])) ?>"
+                 data-has-photo="<?= !empty($t['photo']) ? '1' : '0' ?>"
+                 data-bio="<?= e($t['bio'] ?? '') ?>">
+              <img src="<?= upload_url($t['photo']) ?>" class="rounded-circle mb-3" width="90" height="90"
+                   style="object-fit:cover" alt="<?= e($t['full_name']) ?>">
+              <h6 class="mb-1"><?= e($t['full_name']) ?></h6>
+              <div class="card-cat mb-2"><?= e($t['position']) ?></div>
+              <?php if (!empty($t['expertise'])): ?>
+                <p class="card-meta"><?= excerpt($t['expertise'], 80) ?></p>
+              <?php endif; ?>
+            </div>
           </div>
-        </div>
-      <?php endforeach; ?>
+        <?php endforeach; ?>
+      </div>
     </div>
   </div>
 </section>
+
+<?php include __DIR__ . '/_person-modal.php'; ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  new Swiper('.teachers-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    grabCursor: true,
+    loop: true,
+    speed: 900,
+    autoplay: { delay: 3200, disableOnInteraction: false, pauseOnMouseEnter: true },
+    breakpoints: {
+      576: { slidesPerView: 2 },
+      992: { slidesPerView: 3 },
+      1200: { slidesPerView: 4 }
+    },
+    on: {
+      click: function (sw, e) {
+        var card = e.target.closest('.person-card');
+        var modalEl = document.getElementById('personModal');
+        if (!card || !modalEl) return;
+        bootstrap.Modal.getOrCreateInstance(modalEl).show(card);
+      }
+    }
+  });
+});
+</script>
 <?php endif; ?>
 
 <!-- ============ FEATURED ALUMNI ============ -->
@@ -310,7 +370,7 @@
          style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff">
       <h2 class="mb-3" style="color:#fff">พร้อมเริ่มต้นเส้นทางสายอาชีพกับเรา?</h2>
       <p class="mb-4" style="color:rgba(255,255,255,.9)">สมัครเรียนวันนี้ เพื่ออนาคตด้านการประกอบอาหารและการบริการ</p>
-      <a href="<?= url('programs') ?>" class="btn btn-gold btn-lg me-2">ดูหลักสูตร</a>
+      <a href="<?= url('curriculum') ?>" class="btn btn-gold btn-lg me-2">ดูหลักสูตร</a>
       <a href="<?= url('contact') ?>" class="btn btn-outline-light btn-lg">ติดต่อสอบถาม</a>
     </div>
   </div>
