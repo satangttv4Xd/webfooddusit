@@ -19,15 +19,20 @@ define('APP_NAME_EN', 'School of Culinary Arts, Suan Dusit University');
 
 /**
  * BASE_URL: ที่อยู่หลักของเว็บไซต์ (ต้องลงท้ายด้วย /)
- * ตรวจสอบ host อัตโนมัติ: ถ้าเป็น localhost ใช้อันเดิม ถ้าบนโฮสติ้งใช้โดเมนจริง
+ * ตรวจสอบ host และ protocol อัตโนมัติ (รองรับ Cloudflare Tunnel / Ngrok / Localhost / Production)
  */
-$isLocal = in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1', '']) || (php_sapi_name() === 'cli');
-if ($isLocal) {
+$httpHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (($_SERVER['SERVER_PORT'] ?? 80) == 443)
+    || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+$protocol = $isHttps ? 'https://' : 'http://';
+
+if (in_array($httpHost, ['localhost', '127.0.0.1']) || (php_sapi_name() === 'cli')) {
     define('BASE_URL', 'http://localhost/webfooddusit/');
 } else {
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || ($_SERVER['SERVER_PORT'] ?? 80) == 443) ? 'https://' : 'http://';
-    $host = $_SERVER['HTTP_HOST'] ?? 'webfooddusit.xo.je';
-    define('BASE_URL', $protocol . $host . '/');
+    // ถ้าเข้าผ่าน Tunnel (เช่น trycloudflare.com, ngrok) หรือ IP LAN
+    $subPath = (str_contains($_SERVER['SCRIPT_NAME'] ?? '', '/webfooddusit/') || str_contains($_SERVER['REQUEST_URI'] ?? '', '/webfooddusit')) ? 'webfooddusit/' : '';
+    define('BASE_URL', $protocol . $httpHost . '/' . $subPath);
 }
 
 // ---------- Path ต่าง ๆ ในเครื่อง ----------
@@ -48,20 +53,12 @@ define('SESSION_TIMEOUT', 3600);          // หมดอายุ session (ว�
 define('CSRF_TOKEN_NAME', 'csrf_token');
 define('LOGIN_MAX_ATTEMPTS', 5);          // ล็อกอินผิดได้กี่ครั้งก่อนโดนล็อก
 define('LOGIN_LOCK_TIME', 600);           // ล็อกนานกี่วินาที (10 นาที)
-define('REMEMBER_ME_DAYS', 30);
 
 // ---------- การอัปโหลดไฟล์ ----------
-define('MAX_UPLOAD_SIZE', 30 * 1024 * 1024); // 30 MB (รองรับไฟล์รายงาน PDF ที่มักมีขนาด 12-23 MB)
-define('ALLOWED_IMAGE_TYPES', 'jpg,jpeg,png,webp,gif');
-define('ALLOWED_DOC_TYPES', 'pdf,doc,docx,xls,xlsx,ppt,pptx');
+define('MAX_UPLOAD_SIZE', 20 * 1024 * 1024); // 20 MB
+define('ALLOWED_IMAGE_TYPES', 'jpg,jpeg,png,webp,gif,svg');
+define('ALLOWED_DOC_TYPES', 'pdf,doc,docx,xls,xlsx,ppt,pptx,zip');
 
 // ---------- การแบ่งหน้า (Pagination) ----------
-define('PER_PAGE', 12);
+define('DEFAULT_PER_PAGE', 12);
 define('ADMIN_PER_PAGE', 15);
-
-// ---------- ธีมสี (ใช้อ้างอิงใน CSS/PHP) ----------
-define('COLOR_PRIMARY', '#0F4C81');
-define('COLOR_SECONDARY', '#D4AF37');
-
-// ---------- ภาษา ----------
-define('DEFAULT_LANG', 'th');
