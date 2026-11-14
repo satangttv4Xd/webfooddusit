@@ -174,8 +174,43 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(0,0,0,0.12);
 }
-.fc-daygrid-event-dot {
-  display: none !important;
+/* ตกแต่งปุ่ม + ดูอีก X งาน ให้สวยงามสไตล์ Minimal Pill */
+.fc .fc-daygrid-more-link {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #0b1a30 !important;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 2px 8px;
+  margin: 3px 0 1px 0;
+  text-align: center;
+  display: block;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+.fc .fc-daygrid-more-link:hover {
+  background-color: #e2e8f0;
+  color: #000 !important;
+  transform: translateY(-1px);
+}
+.fc-more-popover {
+  border-radius: 12px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12) !important;
+  overflow: hidden;
+}
+.fc-more-popover .fc-popover-header {
+  background-color: #f8fafc !important;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 8px 12px !important;
+  color: #0b1a30;
+}
+.fc-more-popover .fc-popover-body {
+  padding: 10px !important;
+  max-height: 380px;
+  overflow-y: auto;
 }
 
 .custom-cal-card {
@@ -242,14 +277,15 @@ document.addEventListener('DOMContentLoaded', function () {
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'dayGridMonth'
+      right: ''
     },
     buttonText: {
-      today: 'วันนี้',
-      month: 'เดือน'
+      today: 'วันนี้'
     },
-    dayMaxEvents: false,
-    dayMaxEventRows: false,
+    dayMaxEvents: 2, // แสดง 2 งานแรกในช่อง ถ้ามีมากกว่านั้นจะรวมเป็นปุ่ม "+ ดูเพิ่ม"
+    moreLinkText: function(num) {
+      return '+ ดูอีก ' + num + ' งาน';
+    },
     eventContent: function(arg) {
       const p = arg.event.extendedProps;
       const color = p.color || arg.event.backgroundColor || '#0d6efd';
