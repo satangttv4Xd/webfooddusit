@@ -168,6 +168,8 @@ class SchedulesController extends AdminController
         }
 
         $data = $this->collect();
+        $removeImage = (int)$this->input('remove_image', 0);
+
         if (!empty($_FILES['image']['name'])) {
             $path = \Upload::image($_FILES['image'], 'schedules');
             if ($path === null) {
@@ -178,6 +180,11 @@ class SchedulesController extends AdminController
                 \Upload::remove($item['image']);
             }
             $data['image'] = $path;
+        } elseif ($removeImage === 1) {
+            if (!empty($item['image'])) {
+                \Upload::remove($item['image']);
+            }
+            $data['image'] = null;
         }
 
         $model->update($id, $data);

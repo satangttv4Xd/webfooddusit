@@ -82,28 +82,46 @@ if ($isEdit) {
 
         <div class="mb-3">
           <label class="form-label fw-semibold">รูปภาพประกอบงาน (ถ้ามี)</label>
-          <?php if (!empty($item['image'])): ?>
-            <div class="mb-2 position-relative">
-              <img src="<?= upload_url($item['image']) ?>" id="scheduleImgPreview" class="img-fluid rounded border" style="max-height: 140px; width: 100%; object-fit: cover;">
-            </div>
-          <?php else: ?>
-            <img src="" id="scheduleImgPreview" class="img-fluid rounded border mb-2" style="max-height: 140px; width: 100%; object-fit: cover; display: none;">
-          <?php endif; ?>
-          <input type="file" name="image" class="form-control form-control-sm" accept="image/*" onchange="previewScheduleImage(this)">
-          <div class="form-text small">รองรับ JPG, PNG, WebP (สูงสุด 20 MB)</div>
+          <input type="hidden" name="remove_image" id="removeImageFlag" value="0">
+          
+          <div id="imagePreviewContainer" class="mb-2 position-relative" style="<?= empty($item['image']) ? 'display: none;' : '' ?>">
+            <img src="<?= !empty($item['image']) ? upload_url($item['image']) : '' ?>" id="scheduleImgPreview" class="img-fluid rounded border shadow-sm" style="max-height: 160px; width: 100%; object-fit: cover;">
+            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 rounded-pill px-2 py-1 shadow" id="btnRemoveImage" onclick="removeSelectedImage()" title="เอารูปภาพนี้ออก">
+              <i class="fa-solid fa-trash-can me-1"></i> เอารูปออก
+            </button>
+          </div>
+
+          <input type="file" name="image" id="scheduleFileInput" class="form-control form-control-sm" accept="image/*" onchange="previewScheduleImage(this)">
+          <div class="form-text small text-muted">รองรับ JPG, PNG, WebP (สูงสุด 20 MB)</div>
         </div>
 
         <script>
         function previewScheduleImage(input) {
           const preview = document.getElementById('scheduleImgPreview');
+          const container = document.getElementById('imagePreviewContainer');
+          const removeFlag = document.getElementById('removeImageFlag');
+          
           if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
               preview.src = e.target.result;
-              preview.style.display = 'block';
+              container.style.display = 'block';
+              if (removeFlag) removeFlag.value = '0';
             }
             reader.readAsDataURL(input.files[0]);
           }
+        }
+
+        function removeSelectedImage() {
+          const fileInput = document.getElementById('scheduleFileInput');
+          const preview = document.getElementById('scheduleImgPreview');
+          const container = document.getElementById('imagePreviewContainer');
+          const removeFlag = document.getElementById('removeImageFlag');
+
+          if (fileInput) fileInput.value = '';
+          if (preview) preview.src = '';
+          if (container) container.style.display = 'none';
+          if (removeFlag) removeFlag.value = '1';
         }
         </script>
 
