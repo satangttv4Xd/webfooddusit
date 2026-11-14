@@ -6,13 +6,12 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /webfooddusit/
 
     # ไม่ให้เข้าถึงโฟลเดอร์ app, storage, database, vendor โดยตรง
     RewriteRule ^(app|storage|database|vendor)(/|$) - [F,L]
 
     # ส่งทุกอย่างเข้า public/
-    RewriteCond %{REQUEST_URI} !^/webfooddusit/public/
+    RewriteCond %{REQUEST_URI} !/public/
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 

@@ -5,9 +5,8 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # กำหนด base ให้ตรงกับโฟลเดอร์ที่ติดตั้ง
-    # รันบน XAMPP โฟลเดอร์ htdocs/webfooddusit ให้ใช้บรรทัดนี้:
-    RewriteBase /webfooddusit/public/
+    # RewriteBase ปล่อยว่างเพื่อให้ทำงานได้ทั้งบน localhost และโฮสติ้งจริงโดยอัตโนมัติ
+    # RewriteBase /webfooddusit/public/
 
     # robots.txt / sitemap.xml สร้างแบบ dynamic ผ่าน controller
     RewriteRule ^robots\.txt$ index.php?url=robots [L]

@@ -19,11 +19,16 @@ define('APP_NAME_EN', 'School of Culinary Arts, Suan Dusit University');
 
 /**
  * BASE_URL: ที่อยู่หลักของเว็บไซต์ (ต้องลงท้ายด้วย /)
- * - รันบน XAMPP ในโฟลเดอร์ htdocs/webfooddusit ให้ใช้:
- *     http://localhost/webfooddusit/
- * - ขึ้นโฮสต์จริงให้เปลี่ยนเป็นโดเมนจริง เช่น https://food.dusit.ac.th/
+ * ตรวจสอบ host อัตโนมัติ: ถ้าเป็น localhost ใช้อันเดิม ถ้าบนโฮสติ้งใช้โดเมนจริง
  */
-define('BASE_URL', 'http://localhost/webfooddusit/');
+$isLocal = in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1', '']) || (php_sapi_name() === 'cli');
+if ($isLocal) {
+    define('BASE_URL', 'http://localhost/webfooddusit/');
+} else {
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || ($_SERVER['SERVER_PORT'] ?? 80) == 443) ? 'https://' : 'http://';
+    $host = $_SERVER['HTTP_HOST'] ?? 'webfooddusit.xo.je';
+    define('BASE_URL', $protocol . $host . '/');
+}
 
 // ---------- Path ต่าง ๆ ในเครื่อง ----------
 define('ROOT_PATH', dirname(dirname(__DIR__)));           // โฟลเดอร์รากของโปรเจกต์
