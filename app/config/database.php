@@ -9,7 +9,14 @@
  */
 
 // ตรวจสอบสภาพแวดล้อม (Local หรือ Production/Hosting)
-$isLocal = in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1', '']) || (php_sapi_name() === 'cli');
+$httpHost = $_SERVER['HTTP_HOST'] ?? '';
+$isLocal = in_array($httpHost, ['localhost', '127.0.0.1', ''])
+    || str_contains($httpHost, 'trycloudflare.com')
+    || str_contains($httpHost, 'ngrok-free.app')
+    || str_contains($httpHost, 'ngrok.app')
+    || str_starts_with($httpHost, '192.168.')
+    || str_starts_with($httpHost, '10.')
+    || (php_sapi_name() === 'cli');
 
 if ($isLocal) {
     // สำหรับเครื่อง Localhost (XAMPP)
