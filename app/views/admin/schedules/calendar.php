@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function () {
           html: `
             <div class="custom-cal-card" style="border-top: 3px solid ${color};">
               <div class="custom-cal-img-wrap">
-                <img src="${p.image}" class="custom-cal-img" alt="${arg.event.title}">
+                <img src="${p.image}" class="custom-cal-img" alt="${arg.event.title}" loading="lazy" decoding="async" onerror="this.closest('.custom-cal-img-wrap').style.display='none'">
               </div>
               <div class="custom-cal-body">
                 <div class="custom-cal-title">${arg.event.title}</div>
