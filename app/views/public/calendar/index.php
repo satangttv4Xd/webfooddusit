@@ -110,16 +110,16 @@
   display: none !important;
 }
 
-/* ช่องวันยืดหยุ่นตามเนื้อหาภาพจริง */
+/* ช่องวันจำกัดความสูงพอดีๆ แถวไม่ยืดตามกัน */
 .fc .fc-daygrid-day-frame {
-  min-height: 110px !important;
-  height: auto !important;
+  height: 185px !important;
+  max-height: 185px !important;
   display: flex;
   flex-direction: column;
   padding: 6px;
   background-color: #ffffff;
   transition: background-color 0.15s ease;
-  overflow: visible !important;
+  overflow: hidden !important;
 }
 .fc .fc-daygrid-day:hover .fc-daygrid-day-frame {
   background-color: #fafbfc;
@@ -128,6 +128,7 @@
   flex-direction: row;
   justify-content: flex-end;
   margin-bottom: 4px;
+  flex-shrink: 0;
 }
 .fc .fc-daygrid-day-number {
   font-size: 0.85rem;
@@ -147,13 +148,34 @@
   background-color: transparent !important;
 }
 
-/* Event Container & Minimal Card */
+/* Event Container: เลื่อน Scrollbar เฉพาะช่องวันที่มีงานเยอะ */
 .fc .fc-daygrid-day-events {
   flex-grow: 1;
   margin-top: 0 !important;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 2px;
+}
+/* ตกแต่ง Custom Scrollbar ให้บางเฉียบ เรียบหรู Minimal */
+.fc .fc-daygrid-day-events::-webkit-scrollbar {
+  width: 4px;
+}
+.fc .fc-daygrid-day-events::-webkit-scrollbar-track {
+  background: transparent;
+}
+.fc .fc-daygrid-day-events::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.fc .fc-daygrid-day-events::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+.fc .fc-daygrid-day-events {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
 }
 .fc-daygrid-event-harness {
   margin: 0 !important;
