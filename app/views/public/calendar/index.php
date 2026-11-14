@@ -284,10 +284,7 @@ document.addEventListener('DOMContentLoaded', function () {
     buttonText: {
       today: 'วันนี้'
     },
-    dayMaxEvents: 2, // แสดง 2 งานแรกในช่อง ถ้ามีมากกว่านั้นจะรวมเป็นปุ่ม "+ ดูเพิ่ม"
-    moreLinkText: function(num) {
-      return '+ ดูอีก ' + num + ' งาน';
-    },
+    dayMaxEvents: false, // แสดงทุกงานครบถ้วนทันที ไม่ซ่อนเป็นปุ่ม +ดูเพิ่ม ให้เห็นภาพชัดเจนเลย
     eventContent: function(arg) {
       const p = arg.event.extendedProps;
       const color = p.color || arg.event.backgroundColor || '#0d6efd';
