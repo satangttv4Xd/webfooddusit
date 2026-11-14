@@ -83,8 +83,8 @@
   color: #fff;
   box-shadow: none;
 }
-/* ปรับแต่งปุ่ม "วันนี้" (fc-today-button) ให้ดูสวยหรู ทันสมัย */
-.fc .fc-today-button {
+/* ปรับแต่งปุ่ม "วันนี้" (customTodayBtn) ให้กดได้ตลอดเวลา สไตล์ Navy Minimal */
+.fc .fc-customTodayBtn-button {
   background-color: #0b1a30 !important;
   border-color: #0b1a30 !important;
   color: #ffffff !important;
@@ -93,23 +93,17 @@
   padding: 0.42rem 1.15rem !important;
   box-shadow: 0 2px 6px rgba(11, 26, 48, 0.15) !important;
   transition: all 0.2s ease-in-out !important;
-  opacity: 1 !important;
+  cursor: pointer !important;
 }
-.fc .fc-today-button:hover:not(:disabled) {
+.fc .fc-customTodayBtn-button:hover {
   background-color: #1a2e4c !important;
   border-color: #1a2e4c !important;
   color: #ffffff !important;
   transform: translateY(-1px);
   box-shadow: 0 4px 10px rgba(11, 26, 48, 0.22) !important;
 }
-/* เมื่ออยู่ในเดือนปัจจุบัน (disabled) ให้เป็นสีเทาอ่อนสะอาดตา ชัดเจนแต่ไม่ขัดตา */
-.fc .fc-today-button:disabled {
-  background-color: #f1f5f9 !important;
-  border-color: #e2e8f0 !important;
-  color: #94a3b8 !important;
-  box-shadow: none !important;
-  cursor: not-allowed;
-  opacity: 0.9 !important;
+.fc .fc-customTodayBtn-button:active {
+  transform: translateY(0);
 }
 /* Table Grid Uniformity & Professional Proportions */
 .fc .fc-scrollgrid {
@@ -172,8 +166,40 @@
 .fc .fc-day-other .fc-daygrid-day-frame {
   background-color: #fcfdfe;
 }
+/* ตกแต่งไฮไลต์วันปัจจุบัน (fc-day-today) แบบกรอบเด่นสง่างาม */
 .fc .fc-day-today {
-  background-color: transparent !important;
+  background-color: rgba(11, 26, 48, 0.02) !important;
+}
+.fc .fc-day-today .fc-daygrid-day-frame {
+  position: relative;
+  border: 2px solid #0b1a30 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 0 3px rgba(11, 26, 48, 0.12) !important;
+}
+.fc .fc-day-today .fc-daygrid-day-number {
+  background-color: #0b1a30;
+  color: #ffffff !important;
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-weight: 700;
+}
+/* เอฟเฟกต์ pulse ตอนคลิกปุ่มวันนี้ */
+.fc .fc-day-today.highlight-pulse .fc-daygrid-day-frame {
+  animation: todayGlow 1.2s ease-in-out;
+}
+@keyframes todayGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(11, 26, 48, 0.5);
+    transform: scale(0.98);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(11, 26, 48, 0.25);
+    transform: scale(1.01);
+  }
+  100% {
+    box-shadow: 0 0 0 3px rgba(11, 26, 48, 0.12);
+    transform: scale(1);
+  }
 }
 
 /* Event Container: เลื่อน Scrollbar เฉพาะช่องวันที่มีงานเยอะ */
@@ -329,10 +355,23 @@ document.addEventListener('DOMContentLoaded', function () {
     headerToolbar: {
       left: 'prev,next',
       center: 'title',
-      right: 'today'
+      right: 'customTodayBtn'
     },
-    buttonText: {
-      today: 'วันนี้'
+    customButtons: {
+      customTodayBtn: {
+        text: 'วันนี้',
+        click: function() {
+          calendar.today();
+          // ไฮไลต์กระพริบช่องวันปัจจุบันให้น่ามอง
+          const todayCell = document.querySelector('#publicScheduleCalendar .fc-day-today');
+          if (todayCell) {
+            todayCell.classList.remove('highlight-pulse');
+            void todayCell.offsetWidth; // trigger reflow
+            todayCell.classList.add('highlight-pulse');
+            todayCell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }
+      }
     },
     dayMaxEvents: false, // แสดงทุกงานครบถ้วนทันที ไม่ซ่อนเป็นปุ่ม +ดูเพิ่ม ให้เห็นภาพชัดเจนเลย
     eventContent: function(arg) {
