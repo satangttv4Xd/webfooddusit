@@ -83,6 +83,34 @@
   color: #fff;
   box-shadow: none;
 }
+/* ปรับแต่งปุ่ม "วันนี้" (fc-today-button) ให้ดูสวยหรู ทันสมัย */
+.fc .fc-today-button {
+  background-color: #0b1a30 !important;
+  border-color: #0b1a30 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  padding: 0.42rem 1.15rem !important;
+  box-shadow: 0 2px 6px rgba(11, 26, 48, 0.15) !important;
+  transition: all 0.2s ease-in-out !important;
+  opacity: 1 !important;
+}
+.fc .fc-today-button:hover:not(:disabled) {
+  background-color: #1a2e4c !important;
+  border-color: #1a2e4c !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(11, 26, 48, 0.22) !important;
+}
+/* เมื่ออยู่ในเดือนปัจจุบัน (disabled) ให้เป็นสีเทาอ่อนสะอาดตา ชัดเจนแต่ไม่ขัดตา */
+.fc .fc-today-button:disabled {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #94a3b8 !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+  opacity: 0.9 !important;
+}
 /* Table Grid Uniformity & Professional Proportions */
 .fc .fc-scrollgrid {
   border: 1px solid #edf0f2 !important;
