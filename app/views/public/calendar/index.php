@@ -277,9 +277,9 @@ document.addEventListener('DOMContentLoaded', function () {
     contentHeight: 'auto',
     locale: 'th',
     headerToolbar: {
-      left: 'prev,next today',
+      left: 'prev,next',
       center: 'title',
-      right: ''
+      right: 'today'
     },
     buttonText: {
       today: 'วันนี้'
