@@ -32,9 +32,25 @@ class BannerController extends AdminController
         if (!$this->isPost()) { $this->redirect('admin/banner'); }
         $this->verifyCsrf();
 
-        if (empty($_FILES['image']['name'])) { $this->flash('error', 'กรุณาเลือกรูปแบนเนอร์'); $this->redirect('admin/banner/create'); }
-        $path = Upload::image($_FILES['image'], 'banner');
-        if ($path === null) { $this->flash('error', Upload::$error); $this->redirect('admin/banner/create'); }
+        $croppedData = trim($_POST['cropped_image'] ?? '');
+        $path = null;
+
+        if ($croppedData !== '') {
+            $path = Upload::imageBase64($croppedData, 'banner');
+            if ($path === null) {
+                $this->flash('error', Upload::$error ?: 'ไม่สามารถบันทึกภาพแบนเนอร์ได้');
+                $this->redirect('admin/banner/create');
+            }
+        } elseif (!empty($_FILES['image']['name'])) {
+            $path = Upload::image($_FILES['image'], 'banner');
+            if ($path === null) {
+                $this->flash('error', Upload::$error);
+                $this->redirect('admin/banner/create');
+            }
+        } else {
+            $this->flash('error', 'กรุณาเลือกรูปแบนเนอร์');
+            $this->redirect('admin/banner/create');
+        }
 
         $data = $this->collect();
         $data['image'] = $path;
@@ -60,12 +76,26 @@ class BannerController extends AdminController
         if (!$banner) { $this->flash('error', 'ไม่พบแบนเนอร์'); $this->redirect('admin/banner'); }
 
         $data = $this->collect();
-        if (!empty($_FILES['image']['name'])) {
+        $croppedData = trim($_POST['cropped_image'] ?? '');
+
+        if ($croppedData !== '') {
+            $path = Upload::imageBase64($croppedData, 'banner');
+            if ($path === null) {
+                $this->flash('error', Upload::$error ?: 'ไม่สามารถบันทึกภาพแบนเนอร์ได้');
+                $this->redirect('admin/banner/edit/' . $id);
+            }
+            Upload::remove($banner['image']);
+            $data['image'] = $path;
+        } elseif (!empty($_FILES['image']['name'])) {
             $path = Upload::image($_FILES['image'], 'banner');
-            if ($path === null) { $this->flash('error', Upload::$error); $this->redirect('admin/banner/edit/' . $id); }
+            if ($path === null) {
+                $this->flash('error', Upload::$error);
+                $this->redirect('admin/banner/edit/' . $id);
+            }
             Upload::remove($banner['image']);
             $data['image'] = $path;
         }
+
         $model->update($id, $data);
         audit_log('update', 'banner', "แก้ไขแบนเนอร์ #{$id}");
         $this->flash('success', 'บันทึกเรียบร้อยแล้ว');

@@ -37,7 +37,8 @@ INSERT INTO `permissions` (`name`,`slug`,`module`,`status`,`created_at`) VALUES
 ('จัดการผู้ใช้','users.manage','users','active',NOW()),
 ('จัดการสิทธิ์','roles.manage','roles','active',NOW()),
 ('จัดการตั้งค่า','settings.manage','settings','active',NOW()),
-('ดูข้อความติดต่อ','contact.view','contact','active',NOW());
+('ดูข้อความติดต่อ','contact.view','contact','active',NOW()),
+('จัดการปฏิทินงาน','schedules.manage','schedules','active',NOW());
 
 -- ---------- role_permissions (editor = ข่าว/กิจกรรม/แกลเลอรี) ----------
 INSERT INTO `role_permissions` (`role_id`,`permission_id`,`created_at`)
@@ -126,9 +127,10 @@ INSERT INTO `menu` (`parent_id`,`title`,`url`,`position`,`sort_order`,`status`,`
 (NULL,'หลักสูตร','programs','header',3,'active',NOW(),NOW()),
 (NULL,'ข่าวสาร','news','header',4,'active',NOW(),NOW()),
 (NULL,'กิจกรรม','events','header',5,'active',NOW(),NOW()),
-(NULL,'แกลเลอรี','gallery','header',6,'active',NOW(),NOW()),
-(NULL,'ดาวน์โหลด','downloads','header',7,'active',NOW(),NOW()),
-(NULL,'ติดต่อเรา','contact','header',8,'active',NOW(),NOW());
+(NULL,'ปฏิทินงาน','calendar','header',6,'active',NOW(),NOW()),
+(NULL,'แกลเลอรี','gallery','header',7,'active',NOW(),NOW()),
+(NULL,'ดาวน์โหลด','downloads','header',8,'active',NOW(),NOW()),
+(NULL,'ติดต่อเรา','contact','header',9,'active',NOW(),NOW());
 
 -- ---------- settings ----------
 INSERT INTO `settings` (`key`,`value`,`group`,`type`,`label`,`status`,`created_at`,`updated_at`) VALUES

@@ -25,6 +25,55 @@ class Upload
     }
 
     /**
+     * บันทึกรูปภาพจาก Base64 Data URL (เช่น ผลลัพธ์จากการ Crop ด้วย Cropper.js)
+     * @param string $base64Data Data URL เช่น data:image/jpeg;base64,...
+     * @param string $subfolder โฟลเดอร์ย่อยใน uploads/ เช่น 'banner'
+     * @return string|null path สัมพัทธ์ หรือ null เมื่อผิดพลาด
+     */
+    public static function imageBase64(string $base64Data, string $subfolder = ''): ?string
+    {
+        self::$error = '';
+
+        if (empty($base64Data)) {
+            self::$error = 'ไม่พบข้อมูลรูปภาพ';
+            return null;
+        }
+
+        if (!preg_match('/^data:image\/(jpeg|png|webp);base64,(.+)$/', $base64Data, $matches)) {
+            self::$error = 'รูปแบบข้อมูลรูปภาพไม่ถูกต้อง';
+            return null;
+        }
+
+        $type = $matches[1];
+        $raw = base64_decode($matches[2], true);
+        if ($raw === false) {
+            self::$error = 'ถอดรหัสรูปภาพไม่สำเร็จ';
+            return null;
+        }
+
+        if (strlen($raw) > MAX_UPLOAD_SIZE) {
+            self::$error = 'ไฟล์มีขนาดใหญ่เกินกำหนด (สูงสุด ' . (MAX_UPLOAD_SIZE / 1024 / 1024) . ' MB)';
+            return null;
+        }
+
+        $ext = ($type === 'jpeg') ? 'jpg' : $type;
+        $targetDir = UPLOAD_PATH . '/' . trim($subfolder, '/');
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0755, true);
+        }
+
+        $newName = date('Ymd_His') . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+        $targetPath = $targetDir . '/' . $newName;
+
+        if (file_put_contents($targetPath, $raw) === false) {
+            self::$error = 'ไม่สามารถบันทึกไฟล์รูปภาพได้';
+            return null;
+        }
+
+        return trim($subfolder, '/') . '/' . $newName;
+    }
+
+    /**
      * อัปโหลดเอกสาร (pdf/word/excel...)
      */
     public static function document(array $file, string $subfolder = ''): ?string

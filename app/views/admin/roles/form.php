@@ -6,7 +6,7 @@ $action = $isEdit ? url('admin/roles/update/' . $item['id']) : url('admin/roles/
 
 // ชื่อโมดูลภาษาไทย (fallback เป็นชื่อ slug ถ้าไม่มีในแมป)
 $moduleLabels = [
-    'news' => 'ข่าว', 'programs' => 'หลักสูตร', 'events' => 'กิจกรรม',
+    'news' => 'ข่าว', 'programs' => 'หลักสูตร', 'events' => 'กิจกรรม', 'schedules' => 'ปฏิทินงาน',
     'gallery' => 'แกลเลอรี', 'downloads' => 'ดาวน์โหลด', 'banner' => 'แบนเนอร์',
     'pages' => 'หน้าเนื้อหา', 'users' => 'ผู้ใช้งาน', 'roles' => 'บทบาท/สิทธิ์',
     'settings' => 'ตั้งค่า', 'contact' => 'ข้อความติดต่อ',

@@ -32,7 +32,7 @@ header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header('X-XSS-Protection: 1; mode=block');
 // Content Security Policy (ผ่อนปรนให้ใช้ CDN ที่จำเป็น)
-header("Content-Security-Policy: default-src 'self'; "
+header("Content-Security-Policy: default-src 'self'; connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
     . "img-src 'self' data: blob: https:; "
     . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
     . "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; "

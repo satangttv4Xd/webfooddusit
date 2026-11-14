@@ -690,6 +690,27 @@ CREATE TABLE `newsletter_subscribers` (
   UNIQUE KEY `uq_subscriber_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ============================================================
+--  32) schedules : ปฏิทินงาน / ภารกิจปฏิบัติงาน
+-- ============================================================
+DROP TABLE IF EXISTS `schedules`;
+CREATE TABLE `schedules` (
+  `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title`       VARCHAR(255) NOT NULL COMMENT 'ชื่องาน / ภารกิจ',
+  `description` TEXT DEFAULT NULL COMMENT 'รายละเอียดงาน',
+  `start_date`  DATETIME NOT NULL COMMENT 'วันเวลาเริ่มต้น',
+  `end_date`    DATETIME DEFAULT NULL COMMENT 'วันเวลาสิ้นสุด',
+  `location`    VARCHAR(255) DEFAULT NULL COMMENT 'สถานที่ / ลิงก์ห้องประชุม',
+  `color`       VARCHAR(20) DEFAULT '#0d6efd' COMMENT 'สีแสดงบนปฏิทิน',
+  `assigned_to` VARCHAR(255) DEFAULT NULL COMMENT 'ผู้รับผิดชอบ / หน่วยงาน',
+  `status`      ENUM('active','completed','cancelled') NOT NULL DEFAULT 'active',
+  `created_at`  DATETIME DEFAULT NULL,
+  `updated_at`  DATETIME DEFAULT NULL,
+  `deleted_at`  DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_schedule_start` (`start_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;
 -- ============================================================
 --  จบไฟล์ schema.sql

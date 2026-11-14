@@ -24,6 +24,7 @@ $navItems = [
     ['committee',  'people-group',    'คณะกรรมการประจำโรงเรียน', 'committee.manage'],
     ['alumni',     'user-graduate',   'ศิษย์เก่า', 'staff.manage'],
     ['events',     'calendar-days',   'กิจกรรม', 'events.manage'],
+    ['schedules',  'calendar-check',  'ปฏิทินงาน', 'schedules.manage'],
     ['banner',     'images',          'แบนเนอร์', 'banner.manage'],
     ['gallery',    'photo-film',      'แกลเลอรี', 'gallery.manage'],
     ['downloads',  'file-arrow-down', 'ดาวน์โหลด', 'downloads.manage'],
